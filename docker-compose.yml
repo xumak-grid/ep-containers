@@ -1,0 +1,78 @@
+version: '2'
+services:
+  mysql:
+    image: /ep/mysql-ep-data:1.0.0
+    container_name: mysql
+    ports:
+      - 3306:3306
+    env_file:
+      - env/development.env
+  mysql_up:
+    image: /xumak/base:alpine3.7
+    container_name: mysql_up
+    command: sh -c "while ! nc -z db 3306 > /dev/null; do echo waiting for mysql; sleep 3; done"
+    links:
+    - mysql:db
+    env_file:
+      - env/development.env
+  activemq:
+    image: /grid/ep-activemq:5.14.3
+    container_name: activemq
+    ports:
+      - 61616:61616
+      - 8161:8161
+    env_file:
+      - env/development.env
+  batch:
+   image: /grid/ep-batch:latest
+   container_name: batch
+   ports:
+     - 8084:8080
+   depends_on:
+     - mysql_up
+     - activemq
+   env_file:
+     - env/development.env
+  cm:
+   image: /grid/ep-cm:latest
+   container_name: cm
+   ports:
+     - 8086:8080
+   depends_on:
+     - mysql_up
+     - activemq
+   env_file:
+     - env/development.env
+  integration:
+    image: /grid/ep-integration:latest
+    container_name: integration
+    ports:
+      - 8083:8080
+    depends_on:
+      - mysql_up
+      - activemq
+    env_file:
+      - env/development.env
+  search:
+    image: /grid/ep-search:latest
+    container_name: search
+    ports:
+      - 8082:8082
+    depends_on:
+      - mysql_up
+    # for development purpose the external-solrHome is inside the container
+    # volumes:
+    #   - ~/ep/external-solrHome/solrHome-default:/ep/external-solrHome
+    env_file:
+      - env/development.env
+  cortex:
+    image: /grid/ep-cortex:latest
+    container_name: cortex
+    ports:
+      - 8080:8080
+      - 1081:1081
+    depends_on:
+      - mysql_up
+      - activemq
+    env_file:
+      - env/development.env

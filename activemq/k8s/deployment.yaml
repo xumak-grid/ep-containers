@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: activemq
+spec:
+  ports:
+  - port: 61616
+    name: broker
+    targetPort: broker-port
+  - port: 8161
+    name: http
+    targetPort: web-port
+  selector:
+    app: activemq
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: activemq
+spec:
+  selector:
+    matchLabels:
+      app: activemq
+  template:
+    metadata:
+      labels:
+        app: activemq
+    spec:
+      containers:
+      - image: /grid/ep-activemq:1.0.0
+        imagePullPolicy: Always
+        name: activemq
+        env:
+        - name: ACTIVEMQ_MEMORY
+          value: "2048"
+        ports:
+        - containerPort: 8161
+          name: web-port
+        - containerPort: 61616
+          name: broker-port
+      automountServiceAccountToken: false
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0

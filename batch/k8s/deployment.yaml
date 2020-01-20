@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: batch
+spec:
+  ports:
+  - port: 8084
+    name: http
+    targetPort: web-port
+  selector:
+    app: batch
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: batch
+spec:
+  selector:
+    matchLabels:
+      app: batch
+  template:
+    metadata:
+      labels:
+        app: batch
+    spec:
+      containers:
+      - image: /grid/ep-batch:1.0.0
+        name: ep-batch
+        imagePullPolicy: Always
+        readinessProbe:
+          httpGet:
+            path: /batch/status
+            port: web-port
+        env:
+        - name: DB_SERVER
+          value: mysql
+        - name: DB_PORT
+          value: "3306"
+        - name: EP_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: db-name
+        - name: EP_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: db-password
+        - name: EP_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-credentials
+              key: db-username
+        - name: EP_DB_JDBC_DRIVER_CLASS
+          value: "com.mysql.jdbc.Driver"
+        - name: EP_DB_POPULATION_PARAMS
+          value: "?characterEncoding=UTF-8"
+        - name: EP_DB_CONNECTION_URL
+          value: "jdbc:mysql://${DB_SERVER}:${DB_PORT}/${EP_DB_NAME}${EP_DB_POPULATION_PARAMS}"
+        # - name: EP_DB_VALIDATION_QUERY
+        #   value: "Select 1"
+        - name: BATCH_MEMORY
+          value: "2048"
+        - name: ENABLE_UI_TESTS
+          value: "true"
+        - name: JMS_TYPE
+          value: "org.apache.activemq.pool.PooledConnectionFactory"
+        - name: JMS_FACTORY
+          value: "org.apache.activemq.jndi.JNDIReferenceFactory"
+        - name: JMS_BROKER_URL
+          value: "tcp://activemq:61616"
+        ports:
+        - containerPort: 8080
+          name: web-port
+      automountServiceAccountToken: false
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0

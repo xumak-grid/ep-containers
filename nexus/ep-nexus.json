@@ -1,0 +1,140 @@
+{
+    "artifactoryId": "nexus",
+    "image": "grid/nexus:3.12.0",
+    "customConfig": true,
+    "configuration": {
+        "groups": [
+            {
+                "name": "external-repository-group",
+                "members": [
+                    "maven-central2",
+                    "elastic-path-public",
+                    "elastic-path-cortex",
+                    "elastic-path-commerce-engine",
+                    "elastic-path-accelerators",
+                    "java-net",
+                    "public-jboss-group",
+                    "sonatype",
+                    "wakaleo",
+                    "spring-source-bundles",
+                    "spring-source-zodiac-milestone-bundles",
+                    "spring-source-milestone"
+                ]
+            },
+            {
+                "name": "ep-repository-group",
+                "members": [
+                    "external-repository-group",
+                    "ep-snapshots",
+                    "ep-releases"
+                ]
+            }
+        ],
+        "hosteds": [
+            {
+                "name": "ep-snapshots",
+                "versionPolicy": "SNAPSHOT",
+                "layoutPolicy": "PERMISSIVE"
+            },
+            {
+                "name": "ep-releases",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "PERMISSIVE"
+            }
+        ],
+        "proxies": [
+            {
+                "name": "maven-central2",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "http://central.maven.org/maven2/"
+            },
+            {
+                "name": "elastic-path-public",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "https://repository.elasticpath.com/nexus/content/repositories/public/",
+                "requiredAuth": true,
+                "authentication": {
+                    "username": "xumak",
+                    "password": "PASSWORD-HERE"
+                }
+            },
+            {
+                "name": "elastic-path-cortex",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "https://repository.elasticpath.com/nexus/content/repositories/cortex/",
+                "requiredAuth": true,
+                "authentication": {
+                    "username": "xumak",
+                    "password": "PASSWORD-HERE"
+                }
+            },
+            {
+                "name": "elastic-path-commerce-engine",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "https://repository.elasticpath.com/nexus/content/repositories/commerce-engine/",
+                "requiredAuth": true,
+                "authentication": {
+                    "username": "xumak",
+                    "password": "PASSWORD-HERE"
+                }
+            },
+            {
+                "name": "elastic-path-accelerators",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "https://repository.elasticpath.com/nexus/content/repositories/accelerators/",
+                "requiredAuth": true,
+                "authentication": {
+                    "username": "xumak",
+                    "password": "PASSWORD-HERE"
+                }
+            },
+            {
+                "name": "java-net",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "https://maven.java.net/content/repositories/releases/"
+            },
+            {
+                "name": "public-jboss-group",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "http://repository.jboss.org/nexus/content/groups/public-jboss"
+            },
+            {
+                "name": "sonatype",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "https://repository.sonatype.org/content/groups/forge"
+            },
+            {
+                "name": "wakaleo",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "http://www.wakaleo.com/maven/repos"
+            },
+            {
+                "name": "spring-source-bundles",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "http://repository.springsource.com/maven/bundles/external"
+            },
+            {
+                "name": "spring-source-zodiac-milestone-bundles",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "http://zodiac.springsource.com/maven/bundles/milestone"
+            },
+            {
+                "name": "spring-source-milestone",
+                "versionPolicy": "RELEASE",
+                "layoutPolicy": "STRICT",
+                "remoteUrl": "http://maven.springframework.org/milestone/"
+            }
+        ]
+    }
+}
